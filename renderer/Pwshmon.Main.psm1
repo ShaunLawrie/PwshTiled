@@ -58,7 +58,7 @@ function Read-Background {
     return $imageArray
 }
 
-function Get-Image (
+function Write-Image (
         [object] $Image,
         [int] $OffsetX = 0,
         [int] $OffsetY = 0,
@@ -67,7 +67,7 @@ function Get-Image (
     ) {
     $halfBlock = [Char]0x2584
     $imageString = [System.Text.StringBuilder]::new()
-    $null = $imageString.Append("`e[?25l`e[H")
+    $null = $imageString.Append("`e[?25l`e[2;0H")
     
     for($y = 0; $y -lt $Height; $y += 2) {
         for($x = 0; $x -lt $Width; $x++) {
@@ -88,8 +88,8 @@ function Get-Image (
             $null = $imageString.Append(("`e[38;2;{0};{1};{2}m`e[48;2;{3};{4};{5}m$halfBlock`e[0m" -f $pixelBelow.R, $pixelBelow.G, $pixelBelow.B, $currentPixel.R, $currentPixel.G, $currentPixel.B))
         }
     }
-
-    return $imageString.ToString()
+    
+    [Console]::Write($imageString.ToString())
 }
 
 function Get-ClosestConsoleColor {

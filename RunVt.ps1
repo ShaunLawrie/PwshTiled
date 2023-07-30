@@ -7,33 +7,43 @@ trap {
 }
 
 $image = Read-Background -ImagePath "$PSScriptRoot\media\backgrounds\Pallet.bmp"
-#$image2 = Read-Background -ImagePath "$PSScriptRoot\media\backgrounds\Pallet2.bmp"
-#$imageBufferCells = Get-Image -Image $image -Width $Host.UI.RawUI.WindowSize.Width -Height ($Host.UI.RawUI.WindowSize.Height * 2 - 2)
-#$imageBufferCells2 = Get-Image -ImagePath $image2 -Width $Host.UI.RawUI.WindowSize.Width -Height ($Host.UI.RawUI.WindowSize.Height * 2 - 2)
-#Open-AlternateScreenBuffer
 
-#Set-BufferSize -Width $width -Height $height
-
-$offset = 0
+$frames = 0
 $start = Get-Date
+$imageWidth = $image[0].Count
+$imageHeight = $image.Count
 $width = $Host.UI.RawUI.WindowSize.Width
-$height = $Host.UI.RawUI.WindowSize.Height * 2
+$height = $Host.UI.RawUI.WindowSize.Height * 2 - 2
+$startOffsetX = [int]($imageWidth / 2) - [int]($width / 2)
+$startOffsetY = [int]($imageHeight / 2) - [int]($height / 2)
 
-$originalOut = [Console]::Out
-$sw = [System.IO.StreamWriter]::new([Console]::OpenStandardOutput(), [Console]::Out.Encoding, ($Host.UI.RawUI.BufferSize.Width * $Host.UI.RawUI.BufferSize.Height * 10))
-$sw.AutoFlush = $true
-[Console]::SetOut($sw)
+Clear-Host
+while($true) {
+    $lastKey = $null
+    while([Console]::KeyAvailable) {
+        $lastKey = [Console]::ReadKey($true)
+    }
 
-while($offset -lt 100) {
-    $i = Get-Image -Image $image -OffsetX $offset -Width $width -Height $height
-    $sw.Write($i)
-    $offset += 2
+    switch($lastKey.Key) {
+        "UpArrow" {
+            $startOffsetY--
+        }
+        "DownArrow" {
+            $startOffsetY++
+        }
+        "LeftArrow" {
+            $startOffsetX--
+        }
+        "RightArrow" {
+            $startOffsetX++
+        }
+    }
+
+    Write-Image -Image $image -OffsetX $startOffsetX -OffsetY $startOffsetY -Width $width -Height $height
+    $frameRate = [Math]::Round(($frames / ((Get-Date) - $start).TotalSeconds), 2)
+    [Console]::Write("`e[HFrames rendered = $frames, Framerate = $frameRate FPS")
+    $frames++
 }
 
-$sw.Close()
-$sw.Dispose()
-
-[Console]::SetOut($originalOut)
-$end = (Get-Date) - $start
-$frameRate = [Math]::Round(($offset / $end.TotalSeconds), 2)
-Write-Host "Duration in milliseconds = $($end.TotalMilliseconds), Framerate = $($frameRate * 2) fps"
+$frameRate = [Math]::Round(($frames / ((Get-Date) - $start).TotalSeconds), 2)
+Write-Host "Frames rendered = $frames, Framerate = $frameRate fps"
