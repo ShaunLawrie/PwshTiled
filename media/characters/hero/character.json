@@ -1,0 +1,24 @@
+{
+    "Name": "Hero",
+    "Description": "The hero of the game, they are confused and lost in a strange world. They must find their way home. They are a little bit of a coward, but they are also very curious.",
+    "Sprites": {
+        "Directional": {
+            "Up": [
+                "HeroUp1.png",
+                "HeroUp2.png"
+            ],
+            "Down": [
+                "HeroDown1.png",
+                "HeroDown2.png"
+            ],
+            "Left": [
+                "HeroLeft1.png",
+                "HeroLeft2.png"
+            ],
+            "Right": [
+                "HeroRight1.png",
+                "HeroRight2.png"
+            ]
+        }
+    }
+}
