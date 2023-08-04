@@ -26,7 +26,7 @@ function New-Image {
     return $image
 }
 
-function Read-Background {
+function Read-ImageIntoPixelArray {
     param (
         [string] $ImagePath
     )
