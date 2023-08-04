@@ -1,6 +1,7 @@
 {
     "Name": "Hero",
     "Description": "The hero of the game, they are confused and lost in a strange world. They must find their way home. They are a little bit of a coward, but they are also very curious.",
+    "CameraFocus": true,
     "Width": 16,
     "Height": 16,
     "Sprites": {

@@ -11,16 +11,23 @@ function Import-CharacterFromJson {
 
     # Initialise character
     $character = @{
+        # Should the camera follow the character?
+        CameraFocus = $characterJson.CameraFocus
+        # Where is the character currently on the map?
         Source = @{
             X = 0
             Y = 0
         }
+        # Where is the character moving to on the map?
         Destination = @{
             X = 0
             Y = 0
         }
+        # Which direction is the character facing?
         Direction = "Down"
+        # The images that make up the character
         Sprites = @{
+            # What sprites are available for each direction the character can face?
             Directional = @{
                 Up = @()
                 Down = @()
