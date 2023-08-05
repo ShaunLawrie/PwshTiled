@@ -5,7 +5,5 @@ Some of this included writing a really rough 2d renderer for sprites walking on 
 
 ## Instructions
 
-1. `Install-Module "PwshTiled" -Scope "CurrentUser"`
-2. `Start-PwshTiled`
-
-Use arrow keys to navigate.
+This is super early.
+Try run `.\RunVt.ps1` and use arrow keys to navigate.
