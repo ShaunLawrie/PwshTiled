@@ -13,6 +13,12 @@ function Import-CharacterFromJson {
     $character = @{
         # Should the camera follow the character?
         CameraFocus = $characterJson.CameraFocus
+        # The width of the character sprite used for collisions
+        Width = $characterJson.Width
+        # The height of the character sprite used for collisions
+        Height = $characterJson.Height
+        # Mark the character as moving to lock new inputs, the character can only receive a new direction once it meets its destination
+        IsMoving = $false
         # Where is the character currently on the map?
         Source = @{
             X = 0

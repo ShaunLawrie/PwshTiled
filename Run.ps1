@@ -1,3 +1,5 @@
+# Attempt using buffer cells for high framerate rendering on windows. This is 1000x faster then virtual terminal escape codes on windows terminal but it's restricted to the old terminal color scheme.
+
 Import-Module "$PSScriptRoot\renderer\Pwshmon.Buffer.psm1" -Force
 Import-Module "$PSScriptRoot\renderer\Pwshmon.Cursor.psm1" -Force
 Import-Module "$PSScriptRoot\renderer\Pwshmon.Main.psm1" -Force
