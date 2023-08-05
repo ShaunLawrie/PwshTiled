@@ -8,19 +8,23 @@
         "Directional": {
             "Up": [
                 "HeroUp1.png",
-                "HeroUp2.png"
+                "HeroUp2.png",
+                "HeroUp3.png"
             ],
             "Down": [
                 "HeroDown1.png",
-                "HeroDown2.png"
+                "HeroDown2.png",
+                "HeroDown3.png"
             ],
             "Left": [
                 "HeroLeft1.png",
-                "HeroLeft2.png"
+                "HeroLeft2.png",
+                "HeroLeft3.png"
             ],
             "Right": [
                 "HeroRight1.png",
-                "HeroRight2.png"
+                "HeroRight2.png",
+                "HeroRight3.png"
             ]
         }
     }

@@ -25,7 +25,7 @@ function Get-CharacterPixel ([array] $Characters, [int] $X, [int] $Y) {
 }
 
 # Trying positional parameters to remove parameter parsing overhead. This probably isn't required.
-function Write-TiledFrame ([object] $Background, [object] $BackgroundHitmap, [array] $Characters, [int] $Width, [int] $Height, [int] $HalfTileSize) {
+function Write-TiledFrame ([object] $Map, [array] $Characters, [int] $Width, [int] $Height, [int] $HalfTileSize) {
 
     # Get position of the main character
     $mainCharacter = $Characters | Where-Object { $_.CameraFocus } | Select-Object -First 1
@@ -33,6 +33,9 @@ function Write-TiledFrame ([object] $Background, [object] $BackgroundHitmap, [ar
     # Get the offset of the map based on the main character position
     $mapOffsetX = [int]($mainCharacter.Source.X + $HalfTileSize - ($Width / 2))
     $mapOffsetY = [int]($mainCharacter.Source.Y + $HalfTileSize - ($Height / 2))
+
+    # Get the map frame
+    $mapFrame = $Map.Frames[($global:Frames % $Map.Frames.Count)]
 
     $imageString = [System.Text.StringBuilder]::new()
     $null = $imageString.Append("`e[?25l`e[2;0H")
@@ -44,7 +47,7 @@ function Write-TiledFrame ([object] $Background, [object] $BackgroundHitmap, [ar
             $pixelBelow = Get-CharacterPixel -Characters $Characters -Y ($y + $mapOffsetY + 1) -X ($x + $mapOffsetX)
             # Fill with the background if there was no character pixel
             if(-not $pixelBelow) {
-                $pixelBelow = $Background[($y + $mapOffsetY + 1)][$x + $mapOffsetX]
+                $pixelBelow = $mapFrame[($y + $mapOffsetY + 1)][$x + $mapOffsetX]
                 if($pixelBelow.A -eq 0) {
                     # Get image from background layer below this transparent one
                     throw "Transparent background pixels are not implemented"
@@ -55,7 +58,7 @@ function Write-TiledFrame ([object] $Background, [object] $BackgroundHitmap, [ar
             $currentPixel = Get-CharacterPixel -Characters $Characters -Y ($y + $mapOffsetY) -X ($x + $mapOffsetX)
             # Fill with the background if there was no character pixel
             if(-not $currentPixel) {
-                $currentPixel = $Background[$y + $mapOffsetY][$x + $mapOffsetX]
+                $currentPixel = $mapFrame[$y + $mapOffsetY][$x + $mapOffsetX]
                 if($currentPixel.A -eq 0) {
                     # Get image from background layer below this transparent one
                     throw "Transparent background pixels are not implemented"

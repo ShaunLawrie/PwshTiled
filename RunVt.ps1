@@ -10,12 +10,14 @@ foreach($module in (Get-ChildItem -Filter "*.psm1" -Path "$PSScriptRoot" -Recurs
 # Load characters
 $characters = @()
 foreach($characterDataFile in (Get-ChildItem -Filter "character.json" -Path "$PSScriptRoot" -Recurse)) {
-    $characters += Import-CharacterFromJson -Path "$PSScriptRoot\media\characters\hero\character.json"
+    $characters += Import-CharacterFromJson -Path $characterDataFile.FullName
 }
 
-# Load backgrounds
-$background = Read-ImageIntoPixelArray -ImagePath "$PSScriptRoot\media\backgrounds\Pallet.bmp"
-$backgroundHitmap = Read-ImageIntoPixelArray -ImagePath "$PSScriptRoot\media\backgrounds\PalletHitmap.bmp"
+# Load maps
+$maps = @()
+foreach($mapDataFile in (Get-ChildItem -Filter "map.json" -Path "$PSScriptRoot" -Recurse)) {
+    $maps += Import-MapFromJson -Path $mapDataFile.FullName
+}
 
 # Count the frames so we can feed this into animations to select the correct frame e.g. ($global:Frames % 2) equals walking1, then walking2, then walking1, etc.
 $global:Frames = 0
@@ -25,23 +27,21 @@ $start = Get-Date
 $tileSize = 16
 # Half tile size is frequently required to centre the character and other objects on the tile edge so it's precalculated here
 $halfTileSize = [int]($tileSize / 2)
-# Background is a 2D array, width can be determined by the length of the first row
-$backgroundWidth = $background[0].Count
-# Background is a 2D array, height can be determined by the length of the array
-$backgroundHeight = $background.Count
 # Standard width because pixels are represented by 1 character horizontally
 $terminalWidth = $Host.UI.RawUI.WindowSize.Width
 # Double height to account for half-height characters representing pixels vertically, minus 2 for the prompt
 $terminalHeight = $Host.UI.RawUI.WindowSize.Height * 2 - 2
-# Set the initial map position this should be provided by the map in the future
-$mapOffsetX = [int]($backgroundWidth / 2) - [int]($terminalWidth / 2)
-$mapOffsetY = [int]($backgroundHeight / 2) - [int]($terminalHeight / 2)
-# Set the character to the centre of the map position, the initial character position should be provided by the map in the future
+# Set the start map
+$currentMap = $maps | Where-Object { $_.Name -eq "Pallet" }
+# Get the initial character position
+$currentPosition = $currentMap `
+    | Select-Object -ExpandProperty "CharacterEntryPositions" `
+    | Where-Object { $_.IsDefault -eq $true } `
+    | Select-Object -First 1
+# Set the character to the default entrypoint of the map
 $mainCharacter = $characters | Where-Object { $_.CameraFocus } | Select-Object -First 1
-$mainCharacter.Source = $mainCharacter.Destination = @{
-    X = [int]($mapOffsetX + $halfTileSize + 4)
-    Y = [int]($mapOffsetY - $halfTileSize)
-}
+$mainCharacter.Source = $mainCharacter.Destination = $currentPosition | Select-Object -Property "X", "Y"
+$mainCharacter.Direction = $currentPosition.Direction
 
 # Clear the terminal, this is required to remove the prompt. I tried using the alternative buffer but it seemed to not respect a bunch of escape codes I was using.
 Clear-Host
@@ -68,45 +68,49 @@ while($true) {
 
     # Handle the last key pressed
     if(-not $mainCharacter.IsMoving) {
+        $targetDestination = $null
         switch($lastKey.Key) {
             "UpArrow" {
                 $mainCharacter.Direction = "Up"
-                $mainCharacter.Destination = @{
+                $targetDestination = @{
                     X = $mainCharacter.Source.X
                     Y = $mainCharacter.Source.Y - $tileSize
                 }
             }
             "DownArrow" {
                 $mainCharacter.Direction = "Down"
-                $mainCharacter.Destination = @{
+                $targetDestination = @{
                     X = $mainCharacter.Source.X
                     Y = $mainCharacter.Source.Y + $tileSize
                 }
             }
             "LeftArrow" {
                 $mainCharacter.Direction = "Left"
-                $mainCharacter.Destination = @{
+                $targetDestination = @{
                     X = $mainCharacter.Source.X - $tileSize
                     Y = $mainCharacter.Source.Y
                 }
             }
             "RightArrow" {
                 $mainCharacter.Direction = "Right"
-                $mainCharacter.Destination = @{
+                $targetDestination = @{
                     X = $mainCharacter.Source.X + $tileSize
                     Y = $mainCharacter.Source.Y
                 }
             }
         }
+        if($null -ne $targetDestination -and -not (Test-HitmapCollision -Destination $targetDestination -Hitmap $currentMap.Hitmap)) {
+            $mainCharacter.Destination = $targetDestination
+        }
         $mainCharacter.IsMoving = $true
     }
 
     # Render the frame
-    Write-TiledFrame -Background $background -BackgroundHitmap $backgroundHitmap -Characters $characters -Width $terminalWidth -Height $terminalHeight -HalfTileSize $halfTileSize
+    Write-TiledFrame -Map $currentMap -Characters $characters -Width $terminalWidth -Height $terminalHeight -HalfTileSize $halfTileSize
 
     # Write debug information at the top of the terminal like framerate
     $frameRate = [int](($global:Frames / ((Get-Date) - $start).TotalSeconds))
-    [Console]::Write("`e[HFrames rendered = $global:Frames, Framerate = $frameRate FPS, Char X = $($mainCharacter.Source.X), Char Y = $($mainCharacter.Source.Y), Char Direction = $($mainCharacter.Direction), Char Moving = $($mainCharacter.IsMoving)$(" " * [math]::Min(0, ($width - $logLine.Length)))")
+    [Console]::Write("`e[HFrames rendered = $global:Frames, Framerate = $frameRate FPS, Char X = $($mainCharacter.Source.X), Char Y = $($mainCharacter.Source.Y)$(" " * [math]::Min(0, ($width - $logLine.Length)))")
     $global:Frames++
 }
 

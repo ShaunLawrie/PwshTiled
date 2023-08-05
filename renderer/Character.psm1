@@ -53,7 +53,7 @@ function Import-CharacterFromJson {
             if(-not (Test-Path -Path $imagePath)) {
                 throw "The character json file at '$Path' contains a '$direction' directional sprite with an invalid image path '$imagePath'."
             }
-            $character.Sprites.Directional.$direction += ,@(Read-ImageIntoPixelArray -ImagePath $imagePath -Width $characterJson.Width -Height $characterJson.Height)
+            $character.Sprites.Directional.$direction += ,@(Read-ImageIntoPixelArray -ImagePath $imagePath)
         }
     }
 

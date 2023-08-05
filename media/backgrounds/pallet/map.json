@@ -1,0 +1,28 @@
+{
+    "Name": "Pallet",
+    "Description": "The home town of the hero.",
+    "Width": 352,
+    "Height": 320,
+    "CharacterDefaultEntryPosition": "Home",
+    "CharacterEntryPositions": [
+        {
+            "Name": "Home",
+            "IsDefault": true,
+            "Direction": "Down",
+            "X": 144,
+            "Y": 160
+        },
+        {
+            "Name": "TopTownExit",
+            "IsDefault": false,
+            "Direction": "Down",
+            "X": 192,
+            "Y": 640
+        }
+    ],
+    "Frames": [
+        "Pallet1.png",
+        "Pallet2.png"
+    ],
+    "Hitmap": "PalletHitmap.bmp"
+}
