@@ -1,11 +1,11 @@
-# PwshMon
+# PwshTiled
 
 I had loads of fun yak shaving while preparing for my talk [github.com/ShaunLawrie/PresentingFromIntimidationToInteraction](https://github.com/ShaunLawrie/PresentingFromIntimidationToInteraction)  
 Some of this included writing a really rough 2d renderer for sprites walking on a static background which I've dragged out into this repo for people to play with.
 
 ## Instructions
 
-1. `Install-Module "PwshTiled" -Scope "CurrentUser"`
-2. `Start-PwshTiled`
+This is super early.
+Try run `.\RunVt.ps1` and use arrow keys to navigate.
 
-Use arrow keys to navigate.
+![image](https://github.com/ShaunLawrie/PwshTiled/assets/13159458/23145c70-d9fc-464f-af55-d79e8b4dc221)
