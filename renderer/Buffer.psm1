@@ -1,3 +1,4 @@
+# Trying buffer cell hacks for speed
 $script:OriginalBufferSize = $Host.UI.RawUI.BufferSize
 
 Add-Type -Language CSharp -TypeDefinition @"

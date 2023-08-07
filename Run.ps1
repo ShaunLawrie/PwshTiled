@@ -136,6 +136,9 @@ while($true) {
             $mainCharacter.Direction = $currentPosition.ExitDirection
             $mainCharacter.LastPortal = $currentPosition.Name
             Write-FadeOut
+            if($null -ne $currentPosition.EntryDestinationScript) {
+                Invoke-Expression $currentPosition.EntryDestinationScript
+            }
             # Wipe all input so the character doesn't keep walking on the new map
             while([Console]::KeyAvailable) {
                 $null = [Console]::ReadKey($true)
@@ -147,7 +150,7 @@ while($true) {
 
     # Write debug information at the top of the terminal like framerate
     $frameRate = [int](($global:Frames / ((Get-Date) - $start).TotalSeconds))
-    $logLine = "Frames rendered = $global:Frames, Framerate = $frameRate FPS, Char X = $($mainCharacter.Source.X), Char Y = $($mainCharacter.Source.Y)$global:MapOffset"
+    $logLine = "Frames rendered = $global:Frames, Framerate = $frameRate FPS, Char X = $($mainCharacter.Source.X), Char Y = $($mainCharacter.Source.Y)"
     [Console]::Write("`e[H$logLine$(" " * [math]::Max(0, ($terminalWidth - $logLine.Length)))")
     $global:Frames++
 }

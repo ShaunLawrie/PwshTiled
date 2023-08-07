@@ -9,6 +9,6 @@ Right now I'm just using some images from pokemon to figure out how to render a 
 ## Instructions
 
 This is super early, use a small terminal window because it's very slow.
-Try run `.\RunVt.ps1` and use arrow keys to navigate.
+Try run `.\Run.ps1` and use arrow keys to navigate.
 
 ![image](https://github.com/ShaunLawrie/PwshTiled/assets/13159458/5e90b434-42a3-4eba-ae54-360a85fb9f02)

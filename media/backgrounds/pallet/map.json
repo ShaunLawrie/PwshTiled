@@ -71,7 +71,8 @@
                 "Y": 0
             },
             "EntryDestination": "Pallet",
-            "EntryDestinationPortal": "TopTownExit"
+            "EntryDestinationPortal": "TopTownExit",
+            "EntryDestinationScript": "Write-Host \"You can't leave town! I haven't built the rest of this demo...\"; Start-Sleep -Seconds 3"
         }
     ],
     "Frames": [
