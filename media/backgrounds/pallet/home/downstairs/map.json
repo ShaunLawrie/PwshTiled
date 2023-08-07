@@ -1,0 +1,49 @@
+{
+    "Name": "PalletHomeDownstairs",
+    "Description": "The hero's home town house downstairs.",
+    "Width": 128,
+    "Height": 128,
+    "CharacterDefaultPortal": "FrontDoor",
+    "Portals": [
+        {
+            "Name": "FrontDoor",
+            "ExitDirection": "Up",
+            "Entries": [
+                {
+                    "X": 32,
+                    "Y": 112
+                },
+                {
+                    "X": 48,
+                    "Y": 112
+                }
+            ],
+            "Exit": {
+                "X": 48,
+                "Y": 112
+            },
+            "EntryDestination": "Pallet",
+            "EntryDestinationPortal": "Home"
+        },
+        {
+            "Name": "Stairs",
+            "ExitDirection": "Down",
+            "Entries": [
+                {
+                    "X": 112,
+                    "Y": 0
+                }
+            ],
+            "Exit": {
+                "X": 112,
+                "Y": 16
+            },
+            "EntryDestination": "PalletHomeUpstairs",
+            "EntryDestinationPortal": "Stairs"
+        }
+    ],
+    "Frames": [
+        "HomeDownstairs1.png"
+    ],
+    "Hitmap": "HomeDownstairsHitmap.png"
+}

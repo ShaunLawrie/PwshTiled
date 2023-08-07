@@ -1,0 +1,33 @@
+{
+    "Name": "PalletLab",
+    "Description": "The lab in the home town.",
+    "Width": 160,
+    "Height": 192,
+    "CharacterDefaultPortal": "FrontDoor",
+    "Portals": [
+        {
+            "Name": "FrontDoor",
+            "ExitDirection": "Up",
+            "Entries": [
+                {
+                    "X": 64,
+                    "Y": 176
+                },
+                {
+                    "X": 80,
+                    "Y": 176
+                }
+            ],
+            "Exit": {
+                "X": 64,
+                "Y": 176
+            },
+            "EntryDestination": "Pallet",
+            "EntryDestinationPortal": "Lab"
+        }
+    ],
+    "Frames": [
+        "Lab1.png"
+    ],
+    "Hitmap": "LabHitmap.png"
+}

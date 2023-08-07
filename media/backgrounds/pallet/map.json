@@ -1,28 +1,85 @@
 {
     "Name": "Pallet",
     "Description": "The home town of the hero.",
-    "Width": 352,
-    "Height": 320,
-    "CharacterDefaultEntryPosition": "Home",
-    "CharacterEntryPositions": [
+    "Width": 320,
+    "Height": 288,
+    "CharacterDefaultPortal": "Home",
+    "Portals": [
         {
             "Name": "Home",
-            "IsDefault": true,
-            "Direction": "Down",
-            "X": 144,
-            "Y": 160
+            "ExitDirection": "Down",
+            "Entries": [
+                {
+                    "X": 80,
+                    "Y": 80
+                }
+            ],
+            "Exit": {
+                "X": 80,
+                "Y": 96
+            },
+            "EntryDestination": "PalletHomeDownstairs",
+            "EntryDestinationPortal": "FrontDoor"
+        },
+        {
+            "Name": "RivalsHome",
+            "ExitDirection": "Down",
+            "Entries": [
+                {
+                    "X": 208,
+                    "Y": 80
+                }
+            ],
+            "Exit": {
+                "X": 208,
+                "Y": 96
+            },
+            "EntryDestination": "PalletRival",
+            "EntryDestinationPortal": "FrontDoor"
+        },
+        {
+            "Name": "Lab",
+            "ExitDirection": "Down",
+            "Entries": [
+                {
+                    "X": 192,
+                    "Y": 176
+                }
+            ],
+            "Exit": {
+                "X": 192,
+                "Y": 192
+            },
+            "EntryDestination": "PalletLab",
+            "EntryDestinationPortal": "FrontDoor"
         },
         {
             "Name": "TopTownExit",
-            "IsDefault": false,
-            "Direction": "Down",
-            "X": 192,
-            "Y": 640
+            "ExitDirection": "Down",
+            "Entries": [
+                {
+                    "X": 128,
+                    "Y": 0
+                },
+                {
+                    "X": 144,
+                    "Y": 0
+                }
+            ],
+            "Exit": {
+                "X": 128,
+                "Y": 0
+            },
+            "EntryDestination": "Pallet",
+            "EntryDestinationPortal": "TopTownExit"
         }
     ],
     "Frames": [
         "Pallet1.png",
-        "Pallet2.png"
+        "Pallet2.png",
+        "Pallet3.png",
+        "Pallet4.png",
+        "Pallet5.png"
     ],
     "Hitmap": "PalletHitmap.bmp"
 }

@@ -1,0 +1,33 @@
+{
+    "Name": "PalletRival",
+    "Description": "The rival's home town house.",
+    "Width": 128,
+    "Height": 128,
+    "CharacterDefaultPortal": "FrontDoor",
+    "Portals": [
+        {
+            "Name": "FrontDoor",
+            "ExitDirection": "Up",
+            "Entries": [
+                {
+                    "X": 32,
+                    "Y": 112
+                },
+                {
+                    "X": 48,
+                    "Y": 112
+                }
+            ],
+            "Exit": {
+                "X": 48,
+                "Y": 112
+            },
+            "EntryDestination": "Pallet",
+            "EntryDestinationPortal": "RivalsHome"
+        }
+    ],
+    "Frames": [
+        "Rival1.png"
+    ],
+    "Hitmap": "RivalHitmap.png"
+}

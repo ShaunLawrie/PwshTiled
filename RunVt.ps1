@@ -35,29 +35,32 @@ $terminalHeight = $Host.UI.RawUI.WindowSize.Height * 2 - 2
 $currentMap = $maps | Where-Object { $_.Name -eq "Pallet" }
 # Get the initial character position
 $currentPosition = $currentMap `
-    | Select-Object -ExpandProperty "CharacterEntryPositions" `
-    | Where-Object { $_.IsDefault -eq $true } `
+    | Select-Object -ExpandProperty "Portals" `
+    | Where-Object { $_.Name -eq $currentMap.CharacterDefaultEntryPosition } `
     | Select-Object -First 1
 # Set the character to the default entrypoint of the map
 $mainCharacter = $characters | Where-Object { $_.CameraFocus } | Select-Object -First 1
-$mainCharacter.Source = $mainCharacter.Destination = $currentPosition | Select-Object -Property "X", "Y"
-$mainCharacter.Direction = $currentPosition.Direction
+$mainCharacter.Source = $mainCharacter.Destination = $currentPosition.Exit | Select-Object -Property "X", "Y"
+$mainCharacter.Direction = $currentPosition.ExitDirection
+$mainCharacter.LastPortal = $currentPosition.Name
+# Movement factor is used to increase or decrease the speed of the character
+$movementFactor = 2
 
 # Clear the terminal, this is required to remove the prompt. I tried using the alternative buffer but it seemed to not respect a bunch of escape codes I was using.
 Clear-Host
 while($true) {
-
     # Update character position
     if($mainCharacter.Source.X -ne $mainCharacter.Destination.X -or $mainCharacter.Source.Y -ne $mainCharacter.Destination.Y) {
         if($mainCharacter.Source.X -ne $mainCharacter.Destination.X) {
-            $mainCharacter.Source.X += [Math]::Sign($mainCharacter.Destination.X - $mainCharacter.Source.X)
+            $mainCharacter.Source.X += [Math]::Sign($mainCharacter.Destination.X - $mainCharacter.Source.X) * $movementFactor
         }
         if($mainCharacter.Source.Y -ne $mainCharacter.Destination.Y) {
-            $mainCharacter.Source.Y += [Math]::Sign($mainCharacter.Destination.Y - $mainCharacter.Source.Y)
+            $mainCharacter.Source.Y += [Math]::Sign($mainCharacter.Destination.Y - $mainCharacter.Source.Y) * $movementFactor
         }
         $mainCharacter.IsMoving = $true
     } else {
         $mainCharacter.IsMoving = $false
+        $movementFactor = 2
     }
 
     # Get the last input the user provided. The while loop is required because the console buffer can contain multiple keys and you only want the most recent direction.
@@ -100,17 +103,52 @@ while($true) {
             }
         }
         if($null -ne $targetDestination -and -not (Test-HitmapCollision -Destination $targetDestination -Hitmap $currentMap.Hitmap)) {
+            if($lastKey.Modifiers -contains "Shift") {
+                $movementFactor = 8
+            }
             $mainCharacter.Destination = $targetDestination
+            $mainCharacter.IsMoving = $true
         }
-        $mainCharacter.IsMoving = $true
     }
 
     # Render the frame
     Write-TiledFrame -Map $currentMap -Characters $characters -Width $terminalWidth -Height $terminalHeight -HalfTileSize $halfTileSize
 
+    # Check if the character is at a portal
+    if($mainCharacter.IsMoving -eq $false) {
+        $portal = $currentMap.Portals | Where-Object {
+            foreach($entry in $_.Entries) {
+                if($entry.X -eq $mainCharacter.Source.X -and $entry.Y -eq $mainCharacter.Source.Y) {
+                    return $true
+                }
+            }
+        }
+        if($portal -and $mainCharacter.LastPortal -ne $portal.Name) {
+            # Get the map the portal leads to
+            $currentMap = $maps | Where-Object { $_.Name -eq $portal.EntryDestination }
+            # Get the position the portal leads to
+            $currentPosition = $currentMap `
+                | Select-Object -ExpandProperty "Portals" `
+                | Where-Object { $_.Name -eq $portal.EntryDestinationPortal } `
+                | Select-Object -First 1
+            # Set the character to the default entrypoint of the map
+            $mainCharacter.Source = $mainCharacter.Destination = $currentPosition.Exit | Select-Object -Property "X", "Y"
+            $mainCharacter.Direction = $currentPosition.ExitDirection
+            $mainCharacter.LastPortal = $currentPosition.Name
+            Write-FadeOut
+            # Wipe all input so the character doesn't keep walking on the new map
+            while([Console]::KeyAvailable) {
+                $null = [Console]::ReadKey($true)
+            }
+        } else {
+            $mainCharacter.LastPortal = $portal.Name
+        }
+    }
+
     # Write debug information at the top of the terminal like framerate
     $frameRate = [int](($global:Frames / ((Get-Date) - $start).TotalSeconds))
-    [Console]::Write("`e[HFrames rendered = $global:Frames, Framerate = $frameRate FPS, Char X = $($mainCharacter.Source.X), Char Y = $($mainCharacter.Source.Y)$(" " * [math]::Min(0, ($width - $logLine.Length)))")
+    $logLine = "Frames rendered = $global:Frames, Framerate = $frameRate FPS, Char X = $($mainCharacter.Source.X), Char Y = $($mainCharacter.Source.Y)$global:MapOffset"
+    [Console]::Write("`e[H$logLine$(" " * [math]::Max(0, ($terminalWidth - $logLine.Length)))")
     $global:Frames++
 }
 

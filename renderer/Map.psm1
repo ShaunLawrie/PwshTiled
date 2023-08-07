@@ -4,12 +4,14 @@ function Test-HitmapCollision {
         [array] $Hitmap
     )
 
-    $hitmapPosition = $Hitmap[$Destination.Y][$Destination.X]
-    if(($hitmapPosition.R + $hitmapPosition.G + $hitmapPosition.B) -eq 0) {
-        return $true
-    } else {
-        return $false
+    if($Destination.X -ge 0 -and $Destination.Y -ge 0 -and $Destination.X -lt $Hitmap[0].Count -and $Destination.Y -lt $Hitmap.Count) {
+        $hitmapPosition = $Hitmap[$Destination.Y][$Destination.X]
+        if(($hitmapPosition.R + $hitmapPosition.G + $hitmapPosition.B) -gt 0) {
+            return $false
+        }
     }
+
+    return $true
 }
 
 function Import-MapFromJson {
@@ -32,9 +34,9 @@ function Import-MapFromJson {
         # The height of the map
         Height = $mapJson.Height
         # Where should the character be positioned if this map is loaded?
-        CharacterDefaultEntryPosition = $mapJson.CharacterDefaultEntryPosition
-        # Character entry positions
-        CharacterEntryPositions = @($mapJson.CharacterEntryPositions)
+        CharacterDefaultEntryPosition = $mapJson.CharacterDefaultPortal
+        # Character map transition portals
+        Portals = @($mapJson.Portals)
         # The background layer frames
         Frames = @()
         # Hitmap layer

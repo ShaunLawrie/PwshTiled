@@ -19,6 +19,8 @@ function Import-CharacterFromJson {
         Height = $characterJson.Height
         # Mark the character as moving to lock new inputs, the character can only receive a new direction once it meets its destination
         IsMoving = $false
+        # Last portal
+        LastPortal = $null
         # Where is the character currently on the map?
         Source = @{
             X = 0
